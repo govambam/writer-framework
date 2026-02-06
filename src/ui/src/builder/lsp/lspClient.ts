@@ -204,6 +204,11 @@ function initWebSocketAndStartClient(url: string): WebSocket | null {
 		};
 
 		ws.onclose = () => {
+			// Guard against stale handlers from previous connections
+			if (webSocket !== ws) {
+				return;
+			}
+
 			// Resolve clientReadyPromise if it was never resolved
 			// This prevents hanging when WebSocket fails to connect
 			if (clientReadyResolve) {
